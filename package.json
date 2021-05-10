@@ -1,7 +1,7 @@
 {
   "name": "vue-cli-plugin-workbox-pwa",
   "version": "1.0.0",
-  "description": "VueCLIPlugin for Workbox and Vue 3",
+  "description": "vue-cli plugin for Workbox and Vue 3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kb-coder/vue-cli-plugin-workbox-pwa.git"
