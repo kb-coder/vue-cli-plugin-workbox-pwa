@@ -6,6 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/kb-coder/vue-cli-plugin-workbox-pwa.git"
   },
+  "homepage": "https://github.com/kb-coder/vue-cli-plugin-workbox-pwa#readme",
   "keywords": [
     "workbox",
     "cli",
