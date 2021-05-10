@@ -1,0 +1,3 @@
+NODE_ENV=development
+VUE_APP_DEBUG=true
+VUE_APP_PWA_LOCAL_SERVE=true
