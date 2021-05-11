@@ -20,7 +20,7 @@
   "author": "Karen Baney",
   "license": "MIT",
   "dependencies": {
-    "@vue/cli-shared-utils": "^5.0.0-beta.0",
+    "@vue/cli-shared-utils": "^4.5.13",
     "html-webpack-plugin": "^5.3.1",
     "webpack": "^5.37.0",
     "workbox-webpack-plugin": "^6.1.5"

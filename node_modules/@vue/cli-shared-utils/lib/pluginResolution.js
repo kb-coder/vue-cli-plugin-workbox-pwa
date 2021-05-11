@@ -13,8 +13,7 @@ const officialPlugins = [
   'typescript',
   'unit-jest',
   'unit-mocha',
-  'vuex',
-  'webpack-4'
+  'vuex'
 ]
 
 exports.isPlugin = id => pluginRE.test(id)
