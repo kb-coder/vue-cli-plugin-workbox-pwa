@@ -1,6 +1,6 @@
 # vue-cli-plugin-workbox-pwa
 **ALPA**
-A Vue CLI Plugin with advanced support for workbox 6.x and Vue 3. Includes the ability to debug the service worker locally.
+A Vue CLI Plugin with advanced support for workbox 6.x, Vue 3, and webpack 4. Includes the ability to debug the service worker locally.
 
 How is this different from the vue-cli-plugin-pwa?
 - vue-cli-plugin-pwa depends on register-service-worker but this does not. The register-service-worker makes several assumptions about how the PWA should work, but this does not meet advanced use cases like cached apis, cache first, etc.
@@ -90,7 +90,7 @@ file, or the `"vue"` field in `package.json`.
 
         By default, the start url is set to '/'. If it is set to '.', it will work fine in a web browser or when installed on Windows, but will result in a blank when installed on iOS or Android.
 
-        The router will alse need to have an entry for `path: '/'`. This will meet the requirements for a good `start_url` in Lighthouse.
+        The router will also need to have an entry for `path: '/'`. This will meet the requirements for a good `start_url` in Lighthouse.
 
 - **pwa.manifestCrossorigin**
 
@@ -178,11 +178,29 @@ vue add workbox-pwa
     Default robots.txt is added.
 - **src/sw.js**
     Default service worker file is added with:
-    - common caching scenarios for index.html, css, js, images.
+    - Common caching scenarios for index.html, css, js, images.
     - Workbox's syntax for injecting the manifest. `precacheAndRoute(self.__WB_MANIFEST)`
     - Workbox clear cache for outdated versions of Workbox. `cleanupOutdatedCaches()`
--
-
+- **.env**
+    - If it doesn't exist, then it's created with the new variable `VUE_APP_PWA_LOCAL_SERVE=false`.
+    - If it does, the new variable `VUE_APP_PWA_LOCAL_SERVE=false` is added.
+    - This prevents any environments other than pwalocalserve from using that variable.
+- **.env.pwalocalserve**
+    - Sets `NODE_ENV=development` so Workbox will allow debugging of the service worker.
+    - Sets `VUE_APP_DEBUG=true` so we get Vue debugging.
+    - Sets`VUE_APP_PWA_LOCAL_SERVE=true` so we can actually debug the service worker and by passes the "NoopServiceWorker" middleware. Also injects the manifest.
+- **main.js**
+    - Adds the import statement to register the service worker and calls the register method.
+    - Adds console log statements so you can verify in your browser console that PWA Local Serve is true.
+    ```
+    PWA Local Serve: true
+    Node Env: development
+    ```
+- **service-worker/register-service-worker.js**
+    - The code to create an instance of the service worker and register it.
+    - Also includes code for updating the service worker:
+      - Auto Update - checks for updates to the service worker at an interval. The default is 1 hour.
+      - Manual Update - provides a prompt to the user to manually update the app when a new version of the service worker is available. Depending on your caching strategy, you may want to add code to handle things like flushing the cache, unsaved updates (especially if using Offline Cache), etc.
 
 
 ## License

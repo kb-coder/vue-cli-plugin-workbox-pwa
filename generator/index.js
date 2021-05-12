@@ -21,8 +21,7 @@ module.exports = (api, options, rootOptions) => {
     }
   })
 
-
-  // set up pwaconfiguration
+  // set up pwa configuration
   let pwaConfig = {
     name: 'PWA App',
     shorName: 'App',
@@ -34,7 +33,8 @@ module.exports = (api, options, rootOptions) => {
   }
 
   const manifestType = options.manifestType[0]
-  console.log(`manifestType: ${options.manifestType}`)
+  console.log(`Selected manifest type: ${options.manifestType}`)
+
   pwaConfig.workboxPluginMode = manifestType
 
   if (manifestType == 'InjectManifest') {
@@ -45,8 +45,7 @@ module.exports = (api, options, rootOptions) => {
   }
 
   if (options.vue?.pwa) {
-    // update existing?
-    console.log('has vue pwa')
+    console.log('Using existing pwa settings from vue.config.js')
   } else {
     api.extendPackage({
       vue: {
@@ -57,42 +56,41 @@ module.exports = (api, options, rootOptions) => {
     console.log('pwa config set up complete')
   }
 
-  // TODO: this is putting it in the root :(
-  api.render('./template/public', {
-    ...options,
-  })
+  api.render('./template')
+  console.log('copying files complete')
 
-  api.render('./template/src', {
-    ...options,
-  })
+  console.log('starting .env setup')
+  if (fs.existsSync('.env')) {
+    const envFile = api.resolve('.env')
+    let envContent = fs.readFileSync(envFile, fileEncoding)
+    envContent += '\nVUE_APP_PWA_LOCAL_SERVE=false'
+    fs.writeFileSync(envFile, envContent, fileEncoding)
+    console.log('updated .env')
+  } else {
+    let contentEnv = 'VUE_APP_PWA_LOCAL_SERVE=false\n'
+    fs.appendFile('.env', contentEnv, (err) => {
+      console.log(`${err ? err : 'Created .env'}`)
+    })
+  }
 
-  // TODO: this errors with cwd command. It has to be a path. So I need another way to copy env files?
-  // api.render('./template/_env.pwalocalserve')
+  // if there is an .env.development file, copy it to .env.pwalocalserve and add the new setting
+  if (fs.existsSync('.env.development')) {
+    fs.copyFileSync('.env.development', '.env.pwalocalserve')
+    let envPwaFile = api.resolve('.env.pwalocalserve')
+    let envPwaContent = fs.readFileSync(envPwaFile, fileEncoding)
+    envPwaContent += '\nVUE_APP_PWA_LOCAL_SERVE=true'
+    fs.writeFileSync(envPwaFile, envPwaContent, fileEncoding)
+    console.log('Created .env.pwalocalserve')
+  } else {
+    let pwaEnvContent = 'NODE_ENV=development\n'
+    pwaEnvContent += 'VUE_APP_DEBUG=true\n'
+    pwaEnvContent += 'VUE_APP_PWA_LOCAL_SERVE=true\n'
+    fs.appendFile('.env.pwalocalserve', pwaEnvContent, (err) => {
+      console.log(`${err ? err : 'Created .env.pwalocalserve'}`)
+    })
+  }
 
-  // console.log('copying files complete')
-
-  // console.log('starting .env setup')
-  // if (fs.existsSync('.env')) {
-  //   const envFile = api.resolve('.env')
-  //   let envContent = fs.readFileSync(envFile, fileEncoding)
-  //   envContent += '\nVUE_APP_PWA_LOCAL_SERVE=false'
-  //   fs.writeFileSync(envFile, envContent, fileEncoding)
-  // } else {
-  //   api.render('./template/_env')
-  // }
-
-  // // if there is an .env.development file, copy it to .env.pwalocalserve and add the new setting
-  // if (fs.existsSync('.env.development')) {
-  //   fs.copyFileSync('.env.development', '.env.pwalocalserve')
-  //   let envPwaFile = api.resolve('.env.pwalocalserve')
-  //   let envPwaContent = fs.readFileSync(envPwaFile, fileEncoding)
-  //   envPwaContent += '\nVUE_APP_PWA_LOCAL_SERVE=true'
-  //   fs.writeFileSync(envPwaFile, envPwaContent, fileEncoding)
-  // } else {
-  //   api.render('./template/_env.pwalocalserve')
-  // }
-
-  // console.log('finished .env setup')
+  console.log('finished .env setup')
 
   // Inject service worker registration into main.js/.ts
   api.onCreateComplete(() => {
