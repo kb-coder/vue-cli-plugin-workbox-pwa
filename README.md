@@ -6,6 +6,7 @@ How is this different from the vue-cli-plugin-pwa?
 - vue-cli-plugin-pwa depends on register-service-worker but this does not. The register-service-worker makes several assumptions about how the PWA should work, but this does not meet advanced use cases like cached apis, cache first, etc.
 - vue-cli-plugin-pwa does not provide a way to easily debug the service worker. This plugin does. It makes use of a new environment variable to enable NODE_ENV=development and injecting the manifest with customizations.
 - We started with some of the manifest features of vue-cli-plugin-pwa. Because this is a more fully featured pwa, we start with the assumption that InjectManifest mode of Workbox is needed.
+- There is **no HMR** when running the pwalocalserve mode because the purpose of this mode is strictly for service worker debugging and not application changes.This means if you make changes to the service worker code (or application) while running in pwalocalserve, you will need to stop the app and re-run it and refresh the browser. For application changes, continue using development mode.
 
 ## Set up
 The scripts commands expects a global install of `npm serve`.
@@ -201,6 +202,17 @@ vue add workbox-pwa
     - Also includes code for updating the service worker:
       - Auto Update - checks for updates to the service worker at an interval. The default is 1 hour.
       - Manual Update - provides a prompt to the user to manually update the app when a new version of the service worker is available. Depending on your caching strategy, you may want to add code to handle things like flushing the cache, unsaved updates (especially if using Offline Cache), etc.
+
+
+## Using pwalocalserve
+
+1. Run `npm run pwa-serve`
+2. Navigate to the url. Notice in the console, you should see workbox messages. The following browser console messages let you know you are in the pwalocalserve mode.
+    ```
+    PWA Local Serve: true
+    Node Env: development
+    ```
+3. If you make changes to the service worker code in `src/sw.js` or `src/service-worker/register-service-worker.js`, you will need to stop the application and re-run `npm run pwa-serve`, then refresh the browser. In Chrome Dev Tools under the Application Tab >> Service Worker, you should see there is a new version of the service worker waiting to be activated. Depending on what features you've enabled, the service worker could prompt the user (manual update). You can, of course, customize this code to what you need.
 
 
 ## License
