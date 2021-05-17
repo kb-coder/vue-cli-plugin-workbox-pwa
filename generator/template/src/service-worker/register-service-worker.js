@@ -6,8 +6,8 @@
  import { Workbox } from 'workbox-window'
 
  const autoUpdate = async (registration) => {
-   // const updateInterval = 1000 * 60 * 60 // 1 hour
-   const updateInterval = 100 * 60 * 60 // 1 min // for debugging
+   const updateInterval = 1000 * 60 * 60 // 1 hour
+   // const updateInterval = 1000 * 60 // 1 min // for debugging
    setInterval(async () => {
      try {
        /* eslint-disable-next-line no-unused-expressions */
@@ -21,6 +21,7 @@
 
  const manualUpdateAvailable = (registration) => {
    // Wires up an event that we can listen to in the app. Example: listen for available update and prompt user to update.
+   console.log('sw: manualUpdateAvailable dispatching event')
    document.dispatchEvent(
      new CustomEvent('swUpdated', { detail: registration }))
  }
@@ -39,42 +40,21 @@
      autoUpdate(registration)
 
      wb.addEventListener('activated', async (event) => {
-       // if (event.isUpdate) {
-         // event.isUpdate=true means the service worker was already registered and there is a new version available.
-
-         // this only triggers self.skipWaiting. It still doesn't force the app to update. See /composables/use-service-worker.ts for updating app.
-       wb.messageSkipWaiting()
-       // } else {
-       //   // first time use when event.isUpdate = false
-       //   // service worker should claim the client immediately since its the first install.
-       //   wb.messageSW({ type: 'CLIENTS_CLAIM' })
-       //   console.log('sw: clientsClaim called.')
-       // }
-     })
-
-     // This code listens for the user's confirmation to update the app.
-     wb.addEventListener('message', (event) => {
-       console.log('sw: message event listener hit.')
-       if (event.data && event.data.type === 'SKIP_WAITING') {
-         wb.messageSkipWaiting()
-         console.log('sw: message SKIP_WAITING called.')
-       }
-     })
-
-     wb.addEventListener('installed', (event) => {
-       console.log('sw: installed event listener hit.')
+       console.log('sw: activated event listener hit.')
        if (event.isUpdate) {
-         // Wires up event that is listened to in the use-service-worker composable. The app-manual-update component then
-         // prompts the user there is an update available to activate.
-         // manualUpdateAvailable(registration)
+         // event.isUpdate=true means the service worker was already registered and there is a new version available.
+         // this only triggers self.skipWaiting. It still doesn't force the app to update. See /composables/use-service-worker.ts for updating app.
          wb.messageSkipWaiting()
-         console.log('sw: installed new version.')
        } else {
          // first time use when event.isUpdate = false
          // service worker should claim the client immediately since its the first install.
          wb.messageSW({ type: 'CLIENTS_CLAIM' })
          console.log('sw: clientsClaim called.')
        }
+     })
+
+     wb.addEventListener('installed', (event) => {
+       console.log('sw: installed event listener hit.')
      })
 
      wb.addEventListener('waiting', (event) => {

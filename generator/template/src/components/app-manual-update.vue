@@ -17,7 +17,7 @@ export default {
 <template>
   <div
     style="background-color: #FFFF99;"
-    v-if="updateExists"
+    v-show="updateExists"
   >
     Update available
     <button @click="refreshApp">
