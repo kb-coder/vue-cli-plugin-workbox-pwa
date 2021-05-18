@@ -5,6 +5,8 @@
  */
  import { Workbox } from 'workbox-window'
 
+ // Checks for updates every hour. When an update is found, the app-auto-update component and use-service-worker composable
+ // handles the actual updating.
  const autoUpdate = async (registration) => {
    const updateInterval = 1000 * 60 * 60 // 1 hour
    // const updateInterval = 1000 * 60 // 1 min // for debugging
@@ -19,11 +21,13 @@
    }, updateInterval)
  }
 
- const manualUpdateAvailable = (registration) => {
+ // Emits an event that the use-service-worker composable is listens to. Then the app-manual-update is controlled by
+ // a property on the composable and prompts the user to update.
+ const manualUpdateAvailable = (wb) => {
    // Wires up an event that we can listen to in the app. Example: listen for available update and prompt user to update.
    console.log('sw: manualUpdateAvailable dispatching event')
    document.dispatchEvent(
-     new CustomEvent('swUpdated', { detail: registration }))
+     new CustomEvent('swUpdated', { detail: wb }))
  }
 
  const register = async () => {
@@ -43,7 +47,6 @@
        console.log('sw: activated event listener hit.')
        if (event.isUpdate) {
          // event.isUpdate=true means the service worker was already registered and there is a new version available.
-         // this only triggers self.skipWaiting. It still doesn't force the app to update. See /composables/use-service-worker.ts for updating app.
          wb.messageSkipWaiting()
        } else {
          // first time use when event.isUpdate = false
@@ -60,9 +63,7 @@
      wb.addEventListener('waiting', (event) => {
        console.log('sw: waiting event listener hit.')
        if (event.isUpdate) {
-         // Wires up event that is listened to in the use-service-worker composable. The app-manual-update component then
-         // prompts the user there is an update available to activate.
-         manualUpdateAvailable(registration)
+         manualUpdateAvailable(wb)
        }
      })
 
@@ -72,7 +73,6 @@
 
      wb.addEventListener('fetch', (event) => {
        console.log('sw: fetch event listener hit.')
-       // wb.messageSkipWaiting() // hack to "unfreeze" stuck service worker
      })
    }
  }

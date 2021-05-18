@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 
 export const useServiceWorker = (forceUpdate = false) => {
-  let registration = null
+  let wb = null
   const updateExists = ref(false)
   const refreshing = ref(false)
 
@@ -13,26 +13,27 @@ export const useServiceWorker = (forceUpdate = false) => {
     }
 
     refreshing.value = true
+    updateExists.value = false
     window.location.reload()
   }
 
   const refreshApp = () => {
     console.log('useServiceWorker: refreshApp called.')
-    updateExists.value = false
-    if (registration) {
-      const swState = registration.waiting.state
-      if (swState === 'waiting' || swState === 'installed') {
-        navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' })
-        console.log('useServiceWorker: Posted SKIP_WAITING message.')
-      }
-    }
+    wb.addEventListener('controlling', (event) => {
+      reloadApp()
+    })
+
+    wb.messageSkipWaiting()
   }
 
   const updateAvailable = (event) => {
     console.log('useServiceWorker: Service worker update available.')
     if (event && event.detail) {
-      registration = event.detail
+      wb = event.detail
       updateExists.value = true
+
+      // forceUpdate is used by the app-auto-update component to force the app to activate.
+      // Recommend only using this on the initial landing page or login page of an application.
       if (forceUpdate) {
         console.log('useServiceWorker: Forcing service worker update.')
         refreshApp()
@@ -42,13 +43,6 @@ export const useServiceWorker = (forceUpdate = false) => {
 
   // listen for service worker updates.
   document.addEventListener('swUpdated', updateAvailable, { once: true })
-
-  if (navigator.serviceWorker) {
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('useServiceWorker: controllerchange called')
-      reloadApp()
-    })
-  }
 
   return {
     refreshApp,
