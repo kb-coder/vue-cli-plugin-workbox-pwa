@@ -102,8 +102,8 @@ module.exports = (api, options, rootOptions) => {
     // modify add to content
     let addedContent = '\nregister()\n'
     addedContent += `\nif (process.env.NODE_ENV === 'development' || process.env.VUE_APP_PWA_LOCAL_SERVE === 'true') {`
-    addedContent += '\n  console.log(`PWA Local Serve: ${process.env.VUE_APP_PWA_LOCAL_SERVE}`) // eslint-disable no-console'
-    addedContent += '\n  console.log(`Node Env: ${process.env.NODE_ENV}`) // eslint-disable no-console'
+    addedContent += '\n  console.log(`PWA Local Serve: ${process.env.VUE_APP_PWA_LOCAL_SERVE}`) // eslint-disable-line no-console'
+    addedContent += '\n  console.log(`Node Env: ${process.env.NODE_ENV}`) // eslint-disable-line no-console'
     addedContent += '\n}\n'
 
     contentMain += addedContent

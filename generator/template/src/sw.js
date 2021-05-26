@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching'
 import { registerRoute } from 'workbox-routing'
 import { CacheFirst, NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies'
