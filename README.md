@@ -1,5 +1,6 @@
 # vue-cli-plugin-workbox-pwa
-**ALPA**
+**BETA - submitted PR to Vue CLI https://github.com/vuejs/vue-cli/pull/6497**
+
 A Vue CLI Plugin with advanced support for workbox 6.x, Vue 3, and webpack 4. Includes the ability to debug the service worker locally.
 
 How is this different from the vue-cli-plugin-pwa?
