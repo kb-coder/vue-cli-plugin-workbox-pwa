@@ -24,7 +24,7 @@ module.exports = (api, options, rootOptions) => {
   // set up pwa configuration
   let pwaConfig = {
     name: 'PWA App',
-    shorName: 'App',
+    shortName: 'App',
     themeColor: '#4DBA87',
     msTileColor: '#000000',
     manifestOptions: {
