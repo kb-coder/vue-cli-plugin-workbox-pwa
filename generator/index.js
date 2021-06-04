@@ -12,6 +12,7 @@ module.exports = (api, options, rootOptions) => {
       'workbox-cacheable-response': '^6.1.5',
       'workbox-core': '^6.1.5',
       'workbox-expiration': '^6.1.5',
+      'workbox-precaching': '^6.1.5',
       'workbox-routing': '^6.1.5',
       'workbox-strategies': '^6.1.5',
       'workbox-window': '^6.1.5'
