@@ -77,9 +77,11 @@ module.exports = (api, options) => {
     }
   })
 
-  // install dev server middleware for resetting service worker during dev
-  const createNoopServiceWorkerMiddleware = require('./lib/noopServiceWorkerMiddleware')
-  api.configureDevServer(app => {
-    app.use(createNoopServiceWorkerMiddleware())
-  })
+  // install dev server middleware for resetting service worker during local development
+  if (process.env.NODE_ENV === 'development' && process.env.VUE_APP_PWA_LOCAL_SERVE === 'false') {
+    const createNoopServiceWorkerMiddleware = require('./lib/noopServiceWorkerMiddleware')
+    api.configureDevServer(app => {
+      app.use(createNoopServiceWorkerMiddleware())
+    })
+  }
 }
