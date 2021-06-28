@@ -34,12 +34,12 @@ module.exports = (api, options) => {
         }, userOptions)])
         .after('html')
 
-    webpackConfig
-      .plugin('html')
-      .tap(args => {
-        args[0].title = userOptions.name // Add title to the app bar when installed as PWA.
-        return args
-      })
+//     webpackConfig
+//       .plugin('html')
+//       .tap(args => {
+//         args[0].title = userOptions.name // Add title to the app bar when installed as PWA.
+//         return args
+//       })
 
     // generate /service-worker.js in production mode or pwalocalserve
     // Workbox requires NODE_ENV='development' to show debugging statements for the service worker, so
